@@ -1,0 +1,24 @@
+syntax = "proto3";
+package api.v1;
+
+option go_package = "github.com/dlfdyd96/proto-optional-test/api/v1";
+
+import "google/api/annotations.proto";
+
+message TestMessage {
+  string string_value = 1;
+  optional string optional_string_value = 2;
+  int32 int32_value = 3;
+  optional int32 optional_int32_value = 4;
+  bool bool_value = 5;
+  optional bool optional_bool_value = 6;
+}
+
+service YourService {
+  rpc Echo(TestMessage) returns (TestMessage) {
+      option (google.api.http) = {
+          post: "/v1/example/echo"
+          body: "*"
+        };
+  }
+}
