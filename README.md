@@ -1,7 +1,6 @@
 # Protobuffer Optional Test
 
-- proto 파일에서 primitive type에 대해 optional로 처리하는 경우, generate 된 Go 파일에서 어떻게 보여지는지 확인
-- nil 처리 가능한지 확인.
+- proto 파일에서 primitive type에 대해 optional로 처리하는 경우, gRPC Gateway 를 거친 서버에서 어떻게 보여지는지 확인 (zero-value or nil?)
 - grpc-gateway를 사용하여, client에서 default value(zero-value)를 던졌을 경우 해당 값(nil 이 아닌 값)으로 받는지 확인.
 
 ## Make Protobuffer file
