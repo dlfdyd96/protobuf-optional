@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	v1 "github.com/dlfdyd96/proto-optional-test/api/v1"
+	"github.com/dlfdyd96/proto-optional-test/internal/event"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 	"log"
@@ -14,6 +15,7 @@ import (
 type server struct {
 	port string
 	v1.UnimplementedYourServiceServer
+	repo *event.Repository
 }
 
 func (s *server) mustEmbedUnimplementedYourServiceServer() {
@@ -23,6 +25,11 @@ func (s *server) mustEmbedUnimplementedYourServiceServer() {
 
 func (s *server) Echo(ctx context.Context, message *v1.TestMessage) (*v1.TestMessage, error) {
 	fmt.Printf("%+v\n", message)
+
+	if err := s.repo.CreateEvent(); err != nil {
+		fmt.Printf("%+v\n", err)
+		return nil, err
+	}
 
 	fmt.Printf("string_value: %s\n", message.StringValue)
 	if message.OptionalStringValue != nil {
@@ -58,7 +65,11 @@ func runServer(port string) {
 			}),
 		grpc.MaxConcurrentStreams(5),
 	)
-	v1.RegisterYourServiceServer(s, &server{port, v1.UnimplementedYourServiceServer{}})
+	v1.RegisterYourServiceServer(s, &server{
+		port,
+		v1.UnimplementedYourServiceServer{},
+		event.NewRepository(),
+	})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
